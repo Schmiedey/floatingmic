@@ -18,16 +18,45 @@ Most browser dictation sends audio to a cloud speech API. That fails on locked-d
 
 ## Load unpacked (development)
 
-1. `npm run build` — downloads the speech model (~280 MB). Wait until it finishes.
-2. `chrome://extensions` → Developer mode → **Load unpacked** → select **this project folder**
-3. Click **Reload** on the Voice Anywhere card (important after updates)
-4. Open the extension popup — wait until it says **Ready** (first launch can take up to a minute)
-5. Click **Allow microphone** in the popup (opens a setup tab)
-6. On Google or any site: click the search box, hold **Control**, speak, release
+1. `npm install`
+2. `npm run build` — downloads the speech model (~280 MB) and copies WASM/runtime assets. Wait until it finishes.
+3. `chrome://extensions` → Developer mode → **Load unpacked** → select **this project folder**
+4. Click **Reload** on the Voice Anywhere card (important after updates)
+5. Open the extension popup — wait until it says **Ready** (first launch can take up to a minute)
+6. Click **Allow microphone** in the popup (opens a setup tab)
+7. On Google or any site: click the search box, hold **Control**, speak, release
 
 **Google search:** Click the search box first (or just hold Control on google.com — it auto-targets the search field). Text appears when you release Control.
 
 If the popup shows a model error, run `npm run build` again and reload the extension.
+
+## Cloning from GitHub
+
+This repo does **not** include large binaries or generated files. After cloning, run:
+
+```bash
+npm install
+npm run build
+```
+
+`npm run build` creates everything the extension needs locally:
+
+- `models/` — Whisper ONNX weights (~280 MB; one file is ~199 MB, over GitHub’s 100 MB file limit)
+- `wasm/` — ONNX runtime binaries (~74 MB), copied by `copy-wasm.mjs`
+- `/offscreen.js` and `/verify.js` — bundled outputs (source lives in `src/`)
+
+### Excluded from git (`.gitignore`)
+
+| Path | Why |
+|------|-----|
+| `models/` | ~280 MB Whisper ONNX files (too large for GitHub) |
+| `wasm/` | ~74 MB ONNX runtime binaries (`copy-wasm.mjs`) |
+| `/offscreen.js`, `/verify.js` | Bundled build outputs (`src/` is the source) |
+| `node_modules/` | npm dependencies (`npm install`) |
+| `dist/` | Packaged extension output (`npm run pack`) |
+| `.env*` | Local secrets / env config |
+| `*.pem`, `*.key` | Signing keys |
+| `*.zip`, `*.crx` | Packaged extension artifacts |
 
 ## Chrome Web Store
 
