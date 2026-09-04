@@ -1,0 +1,63 @@
+{
+  "manifest_version": 3,
+  "name": "Voice Anywhere",
+  "version": "4.2.3",
+  "description": "On-device dictation for any text field. Whisper runs locally — your voice never leaves this computer.",
+  "minimum_chrome_version": "109",
+  "permissions": ["clipboardWrite", "offscreen", "storage", "search"],
+  "optional_host_permissions": [
+    "https://huggingface.co/*",
+    "https://*.huggingface.co/*",
+    "https://*.hf.co/*",
+    "https://cdn-lfs.huggingface.co/*",
+    "https://cas-bridge.xethub.hf.co/*"
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "action": {
+    "default_title": "Voice Anywhere — on-device dictation",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "exclude_matches": [
+        "https://chromewebstore.google.com/*",
+        "https://chrome.google.com/webstore/*"
+      ],
+      "js": ["settings.js", "text-tools.js", "speech-page.js"],
+      "run_at": "document_start",
+      "world": "MAIN",
+      "all_frames": true
+    },
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "exclude_matches": [
+        "https://chromewebstore.google.com/*",
+        "https://chrome.google.com/webstore/*"
+      ],
+      "css": ["overlay.css"],
+      "js": ["settings.js", "text-tools.js", "content.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ]
+}

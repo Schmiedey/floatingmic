@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Voice Anywhere Settings</title>
+    <link rel="stylesheet" href="ui.css" />
+  </head>
+  <body class="va-ui va-options">
+    <main>
+      <header class="va-options-hero">
+        <h1>Settings</h1>
+        <p class="va-lead">Hold a key, speak, and type into any field. Whisper runs inside the extension. Audio is not sent to a server.</p>
+      </header>
+
+      <section class="va-rack">
+        <h2>Privacy</h2>
+        <div class="va-card">
+          <p class="va-privacy-lead">Microphone audio is processed on this device. It is not uploaded, not stored on a server, and not used to train a model. There is no account.</p>
+          <ul class="va-privacy-list">
+            <li>Default model is bundled. Offline after install.</li>
+            <li>Dictation history stays in Chrome on this profile.</li>
+            <li>Turn the extension off per site from the popup.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="va-rack">
+        <h2>Capture</h2>
+        <div class="va-card">
+          <div class="va-field">
+            <div class="va-field-copy">
+              <h2>Hotkey</h2>
+              <p>Control fights some sites. Caps Lock always uses toggle mode.</p>
+            </div>
+            <div class="va-chip-row" id="hotkey-presets"></div>
+            <button class="va-btn va-btn-ghost" id="record-hotkey" type="button">Press a custom key</button>
+            <p class="va-note" id="hotkey-status"></p>
+          </div>
+          <div class="va-field">
+            <div class="va-field-copy">
+              <h2>Listen mode</h2>
+              <p>Hold keeps recording until you release. Toggle starts and stops on the same key.</p>
+            </div>
+            <div class="va-seg" role="tablist">
+              <button type="button" id="mode-hold">Hold</button>
+              <button type="button" id="mode-toggle">Toggle</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="va-rack">
+        <h2>Language</h2>
+        <div class="va-card">
+          <div class="va-field">
+            <div class="va-field-copy">
+              <h2>Speech model</h2>
+              <p>Tiny English ships inside the extension and never needs the network. Other models ask permission to download once from Hugging Face.</p>
+            </div>
+            <select id="model" class="va-select"></select>
+            <p class="va-note" id="model-hint"></p>
+          </div>
+          <div class="va-field">
+            <div class="va-field-copy">
+              <h2>Spoken language</h2>
+              <p>English-only models ignore this. Multilingual models need a match.</p>
+            </div>
+            <select id="language" class="va-select"></select>
+          </div>
+        </div>
+      </section>
+
+      <section class="va-rack">
+        <h2>Transcript</h2>
+        <div class="va-card">
+          <label class="va-check">
+            <input type="checkbox" id="voice-commands" />
+            <span>
+              <strong>Voice commands</strong>
+              new line, period, comma, question mark, scratch that
+            </span>
+          </label>
+          <label class="va-check">
+            <input type="checkbox" id="auto-cap" />
+            <span>
+              <strong>Auto-capitalize</strong>
+              First word and after sentence-ending punctuation
+            </span>
+          </label>
+          <label class="va-check">
+            <input type="checkbox" id="punctuation" />
+            <span>
+              <strong>Cleanup</strong>
+              Fix standalone “i”, I’m / I’ve, and spacing around punctuation
+            </span>
+          </label>
+        </div>
+      </section>
+
+      <section class="va-rack">
+        <h2>Sites</h2>
+        <div class="va-card">
+          <div class="va-field">
+            <div class="va-field-copy">
+              <h2>Where it runs</h2>
+              <p>Use the popup to turn the current site off. Lists below are the source of truth.</p>
+            </div>
+            <div class="va-seg" role="tablist">
+              <button type="button" data-site="all">Everywhere</button>
+              <button type="button" data-site="block">Block list</button>
+              <button type="button" data-site="allow">Allow list</button>
+            </div>
+          </div>
+          <div class="va-split">
+            <div class="va-field">
+              <h3>Blocked hosts</h3>
+              <textarea id="blocked" class="va-textarea" placeholder="mail.google.com"></textarea>
+            </div>
+            <div class="va-field">
+              <h3>Allowed hosts</h3>
+              <textarea id="allowed" class="va-textarea" placeholder="docs.google.com"></textarea>
+            </div>
+          </div>
+          <p class="va-note">One hostname per line. Allow list means Voice Anywhere is silent everywhere else.</p>
+        </div>
+      </section>
+
+      <p class="va-footnote">Google Docs is best-effort — it uses a custom editor, not a normal text field. A native Mac menu-bar app is a separate product, not this extension.</p>
+    </main>
+    <script src="settings.js"></script>
+    <script src="options.js"></script>
+  </body>
+</html>

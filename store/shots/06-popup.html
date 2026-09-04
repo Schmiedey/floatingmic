@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Shot · Popup</title>
+    <link rel="stylesheet" href="../../ui.css" />
+    <link rel="stylesheet" href="shot.css" />
+    <style>
+      .popup-shot {
+        position: absolute;
+        top: 72px;
+        right: 72px;
+        width: 320px;
+        padding: 14px;
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+      }
+      .browser { margin: 8vh 0 0 56px; width: min(680px, 58vw); }
+    </style>
+  </head>
+  <body class="shot">
+    <div class="browser">
+      <div class="chrome">
+        <span></span><span></span><span></span>
+        <div class="omni">docs.internal / notes</div>
+      </div>
+      <div class="page">
+        <p class="eyebrow">Notes</p>
+        <h1>Tuesday review</h1>
+        <div class="fake-input">Can we move Tuesday’s review to 3pm?</div>
+        <p class="hint">Text lands in the field you already clicked.</p>
+      </div>
+    </div>
+    <div class="popup-shot va-ui">
+      <div class="va-brand">
+        <div>
+          <h1>Voice Anywhere</h1>
+          <p>On-device. Audio stays here.</p>
+        </div>
+        <span class="va-pill is-ready">Ready</span>
+      </div>
+      <div class="va-meta">
+        <div><span>Hotkey</span><strong>Control</strong></div>
+        <div><span>Mode</span><strong>Hold</strong></div>
+      </div>
+      <button class="va-site" type="button">
+        <span>docs.internal</span>
+        <strong>On</strong>
+      </button>
+      <div class="va-history">
+        <div class="va-history-head">
+          <span>Recent dictation</span>
+          <button class="va-text-btn" type="button">Undo last</button>
+        </div>
+        <ul>
+          <li><button class="va-history-item" type="button">Can we move Tuesday’s review to 3pm?</button></li>
+          <li><button class="va-history-item" type="button">Find last quarter’s invoices</button></li>
+        </ul>
+      </div>
+      <div class="va-actions">
+        <button class="va-btn" type="button">Allow microphone</button>
+        <button class="va-btn va-btn-ghost" type="button">Settings</button>
+      </div>
+    </div>
+  </body>
+</html>

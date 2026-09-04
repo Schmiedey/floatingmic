@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Enable Voice Anywhere</title>
+    <link rel="stylesheet" href="ui.css" />
+  </head>
+  <body class="va-ui va-setup">
+    <main>
+      <div class="va-card">
+        <div class="va-brand">
+          <div>
+            <h1>Enable the microphone</h1>
+            <p>On-device dictation. Your voice stays here.</p>
+          </div>
+        </div>
+        <p class="va-note va-setup-copy">
+          Click allow when Chrome asks. Audio is transcribed on this computer — it is not uploaded.
+        </p>
+        <button class="va-btn" id="enable" type="button">Allow microphone</button>
+        <div class="va-status" id="status"></div>
+        <div class="va-help" id="help">
+          <p>If Chrome never asked:</p>
+          <ul>
+            <li><strong>Mac:</strong> System Settings → Privacy &amp; Security → Microphone → Google Chrome</li>
+            <li><strong>Chrome:</strong> <a href="chrome://settings/content/microphone" target="_blank" rel="noreferrer">Microphone settings</a></li>
+          </ul>
+        </div>
+      </div>
+    </main>
+    <script src="setup.js"></script>
+  </body>
+</html>

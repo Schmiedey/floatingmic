@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Insert harness</title>
+  </head>
+  <body>
+    <textarea id="box" rows="4" cols="60"></textarea>
+    <script src="/speech-page.js"></script>
+    <script>
+      const box = document.getElementById("box");
+      box.focus();
+      box.setSelectionRange(0, 0);
+      window.dispatchEvent(
+        new KeyboardEvent("keydown", {
+          code: "ControlLeft",
+          key: "Control",
+          bubbles: true,
+          cancelable: true,
+        })
+      );
+      window.postMessage(
+        {
+          source: "voice-anywhere",
+          role: "client",
+          type: "chunk",
+          text: "hello from whisper ",
+          isFinal: true,
+        },
+        "*"
+      );
+      setTimeout(() => {
+        window.__VA_INSERT = box.value;
+        window.__VA_INSERT_OK = box.value.indexOf("hello from whisper") !== -1;
+      }, 50);
+    </script>
+  </body>
+</html>

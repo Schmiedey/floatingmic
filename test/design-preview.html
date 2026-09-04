@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Voice Anywhere design preview</title>
+    <link rel="stylesheet" href="/ui.css" />
+    <link rel="stylesheet" href="/overlay.css" />
+    <style>
+      body.preview {
+        margin: 0;
+        padding: 32px;
+        background: #ececec;
+        font: 13px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+        color: #111;
+      }
+      .preview > h1 {
+        margin: 0 0 8px;
+        font: 600 18px/1.2 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      }
+      .preview > p {
+        margin: 0 0 24px;
+        color: #6e6e73;
+      }
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 24px;
+        align-items: flex-start;
+      }
+      .popup-frame {
+        width: 320px;
+        padding: 14px;
+        background: #fff;
+        border: 1px solid #e5e5e7;
+        border-radius: 8px;
+      }
+      .page {
+        position: relative;
+        width: 480px;
+        height: 280px;
+        border-radius: 8px;
+        background: #fff;
+        border: 1px solid #e5e5e7;
+      }
+      .page #voice-anywhere-host {
+        position: absolute;
+        right: 16px;
+        bottom: 16px;
+      }
+      .states {
+        display: grid;
+        gap: 12px;
+        width: 280px;
+      }
+      .states .va-overlay {
+        position: relative;
+        opacity: 1;
+        transform: none;
+        pointer-events: none;
+      }
+      iframe {
+        width: min(640px, 100%);
+        height: 720px;
+        border: 1px solid #e5e5e7;
+        border-radius: 8px;
+        background: #f5f5f5;
+      }
+      h2 {
+        margin: 36px 0 12px;
+        font: 600 14px/1.2 inherit;
+      }
+    </style>
+  </head>
+  <body class="preview">
+    <h1>Design preview</h1>
+    <p>Popup, overlay, and settings.</p>
+    <div class="row">
+      <div class="popup-frame">
+        <div>
+          <div class="va-brand">
+            <div>
+              <h1>Voice Anywhere</h1>
+              <p>On-device. Audio stays here.</p>
+            </div>
+            <span class="va-pill is-ready">Ready</span>
+          </div>
+          <div class="va-meta">
+            <div><span>Hotkey</span><strong>Control</strong></div>
+            <div><span>Mode</span><strong>Hold</strong></div>
+          </div>
+          <button class="va-site" type="button">
+            <span>docs.google.com</span>
+            <strong>On</strong>
+          </button>
+          <div class="va-history">
+            <div class="va-history-head">
+              <span>Recent dictation</span>
+              <button class="va-text-btn" type="button">Undo last</button>
+            </div>
+            <ul>
+              <li><button class="va-history-item" type="button">Can we move Tuesday’s review to 3pm?</button></li>
+              <li><button class="va-history-item" type="button">Find last quarter’s invoices</button></li>
+            </ul>
+          </div>
+          <div class="va-actions">
+            <button class="va-btn" type="button">Allow microphone</button>
+            <button class="va-btn va-btn-ghost" type="button">Settings</button>
+          </div>
+          <p class="va-note">Audio is transcribed on this computer. Chrome blocks microphone prompts inside popups, so setup opens a tab.</p>
+        </div>
+      </div>
+
+      <div class="page">
+        <div id="voice-anywhere-host">
+          <div class="va-overlay va-visible va-state-listening va-speaking" role="status">
+            <div class="va-meter" aria-hidden="true">
+              <span style="transform: scaleY(0.4)"></span>
+              <span style="transform: scaleY(0.8)"></span>
+              <span style="transform: scaleY(1)"></span>
+              <span style="transform: scaleY(0.65)"></span>
+              <span style="transform: scaleY(0.35)"></span>
+              <span style="transform: scaleY(0.5)"></span>
+              <span style="transform: scaleY(0.2)"></span>
+            </div>
+            <div class="va-copy">
+              <span class="va-kicker">Listening</span>
+              <span class="va-label">Release Control when done</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="states">
+        <div class="va-overlay va-visible va-state-processing">
+          <div class="va-meter" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          <div class="va-copy"><span class="va-kicker">Working</span><span class="va-label">Transcribing…</span></div>
+        </div>
+        <div class="va-overlay va-visible va-state-inserted">
+          <div class="va-meter" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          <div class="va-copy"><span class="va-kicker">Inserted</span><span class="va-label">Done</span></div>
+        </div>
+        <div class="va-overlay va-visible va-state-clipboard">
+          <div class="va-meter" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          <div class="va-copy"><span class="va-kicker">Copied</span><span class="va-label">Copied to clipboard</span></div>
+        </div>
+        <div class="va-overlay va-visible va-state-error">
+          <div class="va-meter" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          <div class="va-copy"><span class="va-kicker">Error</span><span class="va-label">Could not start listening</span></div>
+        </div>
+      </div>
+    </div>
+
+    <h2>Settings</h2>
+    <iframe src="/options.html" title="Settings"></iframe>
+    <h2>Setup</h2>
+    <iframe src="/setup.html" title="Setup"></iframe>
+  </body>
+</html>

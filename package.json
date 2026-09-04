@@ -1,0 +1,20 @@
+{
+  "name": "voice-anywhere",
+  "private": true,
+  "scripts": {
+    "build": "node copy-wasm.mjs && node download-models.mjs && node verify-models.mjs && esbuild src/whisper-engine.js --bundle --format=esm --outfile=offscreen.js --platform=browser && esbuild src/verify.js --bundle --format=esm --outfile=verify.js --platform=browser",
+    "test:overlay": "node test/run-overlay.mjs",
+    "test:e2e": "node test/run-e2e.mjs",
+    "test:iframe": "node test/run-iframe.mjs",
+    "test": "node test/run-overlay.mjs && node test/run-e2e.mjs && node test/run-iframe.mjs && node test/run-fields.mjs && node test/run-features.mjs",
+    "shots": "node store/capture-shots.mjs",
+    "pack": "node pack.mjs"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "^4.2.0",
+    "esbuild": "^0.28.2"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.62.1"
+  }
+}

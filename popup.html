@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Voice Anywhere</title>
+    <link rel="stylesheet" href="ui.css" />
+  </head>
+  <body class="va-ui va-popup">
+    <div class="va-brand">
+      <div>
+        <h1>Voice Anywhere</h1>
+        <p id="engine-line">Checking speech engine…</p>
+      </div>
+      <span class="va-pill" id="engine-pill">…</span>
+    </div>
+
+    <div class="va-meta">
+      <div><span>Hotkey</span><strong id="hotkey-label">Control</strong></div>
+      <div><span>Mode</span><strong id="mode-label">Hold</strong></div>
+    </div>
+
+    <button class="va-site" id="site-toggle" type="button">
+      <span id="site-host">This page</span>
+      <strong id="site-state">On</strong>
+    </button>
+
+    <div class="va-history">
+      <div class="va-history-head">
+        <span>Recent dictation</span>
+        <button class="va-text-btn" id="undo" type="button">Undo last</button>
+      </div>
+      <ul id="history"></ul>
+    </div>
+
+    <div class="va-actions">
+      <button class="va-btn" id="open" type="button">Allow microphone</button>
+      <button class="va-btn va-btn-ghost" id="settings" type="button">Settings</button>
+    </div>
+    <p class="va-note">Audio is transcribed on this computer. Chrome blocks microphone prompts inside popups, so setup opens a tab.</p>
+    <script src="settings.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>

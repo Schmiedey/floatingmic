@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Field insert tests</title>
+  </head>
+  <body>
+    <input id="search" type="search" placeholder="search" />
+    <div id="combo" role="combobox" aria-expanded="true">
+      <input id="combo-input" type="text" placeholder="combobox search" />
+    </div>
+    <div id="editable" contenteditable="true" style="border:1px solid #ccc; min-height:24px; padding:4px;"></div>
+    <custom-field></custom-field>
+    <div role="combobox" aria-label="Search">
+      <textarea id="google-search" name="q" readonly placeholder="Search Google"></textarea>
+    </div>
+        <script src="/settings.js"></script>
+    <script src="/text-tools.js"></script>
+    <script src="/speech-page.js"></script>
+    <script>
+      customElements.define(
+        "custom-field",
+        class extends HTMLElement {
+          constructor() {
+            super();
+            const root = this.attachShadow({ mode: "open" });
+            const input = document.createElement("input");
+            input.type = "search";
+            input.id = "shadow-search";
+            input.placeholder = "shadow search";
+            root.appendChild(input);
+          }
+        }
+      );
+
+      const cases = [
+        { id: "search", expect: "alpha" },
+        { id: "combo-input", expect: "beta" },
+        { id: "editable", expect: "gamma", isContentEditable: true },
+        { id: "shadow-search", expect: "delta", shadow: true },
+        { id: "google-search", expect: "epsilon" },
+      ];
+
+      window.__VA_FIELD_RESULTS = [];
+
+      window.postMessage(
+        {
+          source: "voice-anywhere",
+          role: "settings",
+          settings: Object.assign({}, window.VoiceAnywhereSettings.DEFAULTS, {
+            autoCapitalize: false,
+            punctuation: false,
+            voiceCommands: false,
+          }),
+        },
+        "*"
+      );
+
+      function runCase(index) {
+        if (index >= cases.length) return;
+        const spec = cases[index];
+        let el;
+        if (spec.shadow) {
+          el = document.querySelector("custom-field").shadowRoot.getElementById(spec.id);
+        } else {
+          el = document.getElementById(spec.id);
+        }
+        el.focus();
+        if (el.setSelectionRange) el.setSelectionRange(0, 0);
+        window.dispatchEvent(
+          new KeyboardEvent("keydown", {
+            code: "ControlLeft",
+            key: "Control",
+            bubbles: true,
+            cancelable: true,
+            composed: true,
+          })
+        );
+        window.postMessage(
+          {
+            source: "voice-anywhere",
+            role: "client",
+            type: "chunk",
+            text: spec.expect + " ",
+            isFinal: true,
+          },
+          "*"
+        );
+        setTimeout(function () {
+          const value = spec.isContentEditable
+            ? el.textContent
+            : el.value;
+          window.__VA_FIELD_RESULTS.push({
+            id: spec.id,
+            ok: (value || "").indexOf(spec.expect) !== -1,
+            value: value,
+          });
+          window.dispatchEvent(
+            new KeyboardEvent("keyup", {
+              code: "ControlLeft",
+              key: "Control",
+              bubbles: true,
+              cancelable: true,
+              composed: true,
+            })
+          );
+          runCase(index + 1);
+        }, 40);
+      }
+
+      setTimeout(function () {
+        runCase(0);
+      }, 20);
+    </script>
+  </body>
+</html>

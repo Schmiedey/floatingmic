@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Feature tests</title>
+  </head>
+  <body>
+    <textarea id="box"></textarea>
+    <input id="search" type="search" />
+    <script src="/settings.js"></script>
+    <script src="/text-tools.js"></script>
+    <script src="/speech-page.js"></script>
+    <script>
+      const Settings = window.VoiceAnywhereSettings;
+      const Text = window.VoiceAnywhereText;
+      window.__VA_FEATURE_RESULTS = [];
+
+      function record(id, ok, detail) {
+        window.__VA_FEATURE_RESULTS.push({ id: id, ok: !!ok, detail: detail });
+      }
+
+      function key(type, code, keyName) {
+        window.dispatchEvent(
+          new KeyboardEvent(type, {
+            code: code,
+            key: keyName,
+            bubbles: true,
+            cancelable: true,
+            composed: true,
+          })
+        );
+      }
+
+      function chunk(text) {
+        window.postMessage(
+          {
+            source: "voice-anywhere",
+            role: "client",
+            type: "chunk",
+            text: text,
+            isFinal: true,
+          },
+          "*"
+        );
+      }
+
+      function setSettings(partial) {
+        const settings = Settings.normalize(Object.assign({}, Settings.DEFAULTS, partial));
+        window.postMessage(
+          { source: "voice-anywhere", role: "settings", settings: settings },
+          "*"
+        );
+      }
+
+      function wait(ms) {
+        return new Promise(function (resolve) {
+          setTimeout(resolve, ms);
+        });
+      }
+
+      async function run() {
+        const commands = Text.applyVoiceCommands("hello period new line world comma yes");
+        record(
+          "commands",
+          commands.text.indexOf("hello.") !== -1 &&
+            commands.text.indexOf("\n") !== -1 &&
+            commands.text.indexOf(",") !== -1,
+          commands.text
+        );
+        record("undo-phrase", Text.applyVoiceCommands("scratch that").undo, "");
+        record(
+          "capitalize",
+          Text.process("hello period world", { voiceCommands: true, autoCapitalize: true, punctuation: true }, { prevChar: "" }).text.indexOf("Hello.") !== -1,
+          Text.process("hello period world", { voiceCommands: true, autoCapitalize: true, punctuation: true }, { prevChar: "" }).text
+        );
+        record(
+          "pronoun",
+          Text.applyPunctuation("i think i'll go").indexOf("I think I'll") !== -1,
+          Text.applyPunctuation("i think i'll go")
+        );
+        record(
+          "blocked-site",
+          Settings.siteAllowed(
+            Settings.normalize({ siteMode: "block", blockedHosts: ["mail.google.com"] }),
+            "mail.google.com"
+          ) === false &&
+            Settings.siteAllowed(
+              Settings.normalize({ siteMode: "block", blockedHosts: ["mail.google.com"] }),
+              "example.com"
+            ) === true,
+          ""
+        );
+        record(
+          "allow-list",
+          Settings.siteAllowed(
+            Settings.normalize({ siteMode: "allow", allowedHosts: ["docs.google.com"] }),
+            "example.com"
+          ) === false,
+          ""
+        );
+        record(
+          "hallucination-you",
+          Text.isLikelyHallucination("you") &&
+            Text.isLikelyHallucination("You.") &&
+            Text.process("you", { voiceCommands: false, autoCapitalize: true, punctuation: true }, { prevChar: "" }).text === "",
+          Text.process("you", { voiceCommands: false, autoCapitalize: true, punctuation: true }, { prevChar: "" }).text
+        );
+        record(
+          "keep-real-you",
+          !Text.isLikelyHallucination("you are here") &&
+            Text.process("weather in austin", { voiceCommands: false, autoCapitalize: false, punctuation: false }, { prevChar: "" }).text.indexOf("weather") !== -1,
+          ""
+        );
+        record(
+          "hotkey-alt",
+          Settings.matchesHotkey({ key: "Alt", code: "AltLeft", altKey: true, ctrlKey: false, metaKey: false, shiftKey: false }, { hotkeyKey: "Alt", hotkeyCode: "" }) &&
+            !Settings.matchesHotkey({ key: "Control", code: "ControlLeft", altKey: false, ctrlKey: true, metaKey: false, shiftKey: false }, { hotkeyKey: "Alt", hotkeyCode: "" }),
+          ""
+        );
+
+        const box = document.getElementById("box");
+        box.value = "";
+        box.focus();
+        setSettings({ voiceCommands: true, autoCapitalize: true, punctuation: true });
+        await wait(20);
+        key("keydown", "ControlLeft", "Control");
+        chunk("you ");
+        await wait(40);
+        record("no-you-on-silence", box.value.indexOf("you") === -1 && box.value.indexOf("You") === -1, box.value);
+        key("keyup", "ControlLeft", "Control");
+        await wait(20);
+
+        box.value = "";
+        box.focus();
+        key("keydown", "ControlLeft", "Control");
+        chunk("hello period new line next");
+        await wait(40);
+        record(
+          "insert-commands",
+          box.value.indexOf("Hello.") !== -1 && box.value.indexOf("\n") !== -1,
+          box.value
+        );
+        window.postMessage({ source: "voice-anywhere", role: "client", type: "undo" }, "*");
+        await wait(40);
+        record("undo", box.value.indexOf("Hello.") === -1 || box.value.length < 8, box.value);
+        key("keyup", "ControlLeft", "Control");
+        await wait(20);
+
+        box.value = "";
+        box.focus();
+        setSettings({ captureMode: "toggle", voiceCommands: false, autoCapitalize: false, punctuation: false });
+        await wait(20);
+        key("keydown", "ControlLeft", "Control");
+        key("keyup", "ControlLeft", "Control");
+        chunk("held ");
+        await wait(40);
+        record("toggle-stays-open", box.value.indexOf("held") !== -1, box.value);
+        key("keydown", "ControlLeft", "Control");
+        await wait(20);
+
+        document.getElementById("search").blur();
+        box.blur();
+        document.body.focus();
+        setSettings({ captureMode: "hold", autoCapitalize: false, punctuation: false, voiceCommands: false });
+        await wait(20);
+        key("keydown", "ControlLeft", "Control");
+        chunk("nope ");
+        await wait(40);
+        key("keyup", "ControlLeft", "Control");
+        record("no-field", /nope/.test(box.value) === false, box.value);
+        window.__VA_FEATURE_DONE = true;
+      }
+
+      setTimeout(function () {
+        run();
+      }, 30);
+    </script>
+  </body>
+</html>
